@@ -133,7 +133,7 @@ class Server:
 
         elif config.fd is not None:  # pragma: py-win32
             # Use an existing socket, from a file descriptor.
-            sock = socket.fromfd(config.fd, socket.AF_UNIX, socket.SOCK_STREAM)
+            sock = socket.fromfd(config.fd, socket.AF_INET, socket.SOCK_STREAM)
             server = await loop.create_server(
                 create_protocol, sock=sock, ssl=config.ssl, backlog=config.backlog
             )

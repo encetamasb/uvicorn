@@ -1,4 +1,5 @@
 import asyncio
+import random
 import inspect
 import json
 import logging
@@ -264,6 +265,8 @@ class Config:
         self.root_path = root_path
         self.limit_concurrency = limit_concurrency
         self.limit_max_requests = limit_max_requests
+        if self.limit_max_requests:
+            self.limit_max_requests += random.randint(0, int(self.limit_max_requests  * 0.2))
         self.backlog = backlog
         self.timeout_keep_alive = timeout_keep_alive
         self.timeout_notify = timeout_notify
@@ -376,7 +379,7 @@ class Config:
 
     @property
     def use_subprocess(self) -> bool:
-        return bool(self.reload or self.workers > 1)
+        return True  # bool(self.reload or self.workers > 1)
 
     def configure_logging(self) -> None:
         logging.addLevelName(TRACE_LOG_LEVEL, "TRACE")
@@ -534,7 +537,7 @@ class Config:
             )
             logger_args = [self.uds]
         elif self.fd:  # pragma: py-win32
-            sock = socket.fromfd(self.fd, socket.AF_UNIX, socket.SOCK_STREAM)
+            sock = socket.fromfd(self.fd, socket.AF_INET, socket.SOCK_STREAM)
             message = "Uvicorn running on socket %s (Press CTRL+C to quit)"
             fd_name_format = "%s"
             color_message = (
